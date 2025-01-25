@@ -1,0 +1,156 @@
+<html lang="en">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<body>
+    <div class="container">
+        <div class="text-container">
+            <h1>YouTube Downloader</h1>
+        </div>
+        <hr/>
+        <div class="button-container">
+            <button id="download-video" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="icon">
+                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+                </svg>
+                
+                <span>
+                    Download Video
+                </span>
+            </button>
+            <button id="download-audio" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="icon">
+                    <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd" />
+                </svg>
+
+                <span>
+                    Download Audio
+                </span>
+            </button>
+        </div>
+        <hr/>
+        <div class="text-container">
+            <a href="https://github.com/ikno-the-box-guy/IkTube" target="_blank">GitHub</a>
+        </div>
+    </div>
+</body>
+
+<script src="scripts/downloader.js"></script>
+
+<style>
+    html {
+        height: 195px;
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+        
+        background: #fef7ff;
+        
+        width: 240px;
+        height: auto;
+
+        font-family: "Roboto", serif;
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: normal;
+        font-variation-settings: "wdth" 100;
+    }
+    
+    h1 {
+        color: #1d1b20;
+        
+        font-size: 20px;
+        margin: 0;
+    }
+    
+    hr {
+        border: none;
+        border-top: solid 1px #cac4d0;
+        height: 1px;
+        
+        margin: 0;
+    }
+    
+    a {
+        color: #4f378a;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    a:hover {
+        text-decoration: underline;
+    }
+    
+    .button-container {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        
+        display: flex;
+        flex-direction: column;
+        
+        gap: 10px;
+    }
+    
+    button {
+        background: #65558f;
+        color: #fff;
+        
+        border: none;
+        
+        padding: 8px 30px;
+        height: auto;
+        
+        display: flex;
+        align-items: center;
+        
+        gap: 10px;
+        
+        font-family: inherit;
+        font-size: 15px;
+    }
+    
+    button:hover {
+        cursor: pointer;
+        
+        background: #4f378a;
+    }
+    
+    button:active {
+        background: #3b2a5f;
+    }
+    
+    button:disabled {
+        background: #cac4d0;
+    }
+    
+    button:disabled:hover {
+        cursor: auto;
+    }
+    
+    button[downloading] {
+        background: #6e687a !important;
+    }
+    
+    button[downloading]:hover {
+        background: #6e687a !important;
+        cursor: wait !important;
+    }
+    
+    .icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .container {
+        padding: 0;
+    }
+    
+    .text-container {
+        padding: 10px;
+    }
+</style>
+</html>
