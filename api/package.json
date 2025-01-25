@@ -1,0 +1,20 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "program.js",
+  "type": "module",
+  "scripts": {
+    "start": "node program.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ikno-the-box-guy/IkTube"
+  },
+  "private": true,
+  "dependencies": {
+    "express": "^4.21.2",
+    "yt-dlp-wrap": "^2.3.12"
+  }
+}
