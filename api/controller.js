@@ -1,5 +1,4 @@
-﻿import {exec} from "child_process";
-import * as fs from "node:fs";
+﻿import {spawn} from 'child_process';
 
 // TODO: Add quality settings
 
@@ -17,7 +16,7 @@ const cleanVideoId = (id) => {
     }
 }
 
-const download = async (commandBase, extension, req, res) => {
+const download = async (params, extension, req, res) => {
     const id = req.params.id;
     const videoId = cleanVideoId(id);
 
@@ -26,50 +25,39 @@ const download = async (commandBase, extension, req, res) => {
         return;
     }
     
-    const filename = 'downloads/' + videoId + extension;
+    const ytDlp = spawn('yt-dlp', [...params, '-o', '-', videoId]);
     
-    // Set output name, input video, suppress download logs and output JSON
-    const command = commandBase + ` -o "${filename}" "${videoId}" -q --no-simulate -j`
-    
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`${error.message}`);
-            res.status(500).send('An error occurred');
-            return;
+    // Set the response headers (e.g., for a video file)
+    res.setHeader('Content-Disposition', `attachment; filename="${videoId}.${extension}"`); // Optional: Suggest file name for download
+
+    // Pipe yt-dlp's stdout to the response
+    ytDlp.stdout.pipe(res);
+
+    // Handle any errors in the yt-dlp process
+    ytDlp.on('error', (err) => {
+        console.error('Error with yt-dlp:', err);
+        res.status(500).send('Error downloading video');
+    });
+
+    // Handle when the download is complete
+    ytDlp.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`yt-dlp exited with code ${code}`);
+            res.status(500).send('Failed to download video');
         }
-        if (stderr) {
-            console.error(`${stderr}`);
-            res.status(500).send('An error occurred');
-            return;
-        }
-
-        const info = JSON.parse(stdout);
-
-        res.download(filename, info.title + extension, (err) => {
-            if (err) {
-                console.error(err);
-
-                res.status(500).send('An error occurred');
-            } else {
-                // TODO: Add caching, maybe?
-                fs.unlink(filename, (err) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                });
-            }
-        });
     });
 }
 
 export const downloadVideo = async (req, res) => {
-    const command = 'yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"';
+    const params = ['-f', 'best'];
     
-    await download(command, '.mp4', req, res);
+    res.setHeader('Content-Type', 'video/mp4');
+    await download(params, 'mp4', req, res);
 }
 
 export const downloadAudio = async (req, res) => {
-    const command = 'yt-dlp -x --audio-format mp3';
+    const params = ['-x', '--audio-format', 'mp3'];
 
-    await download(command, '.mp3', req, res);
+    res.setHeader('Content-Type', 'audio/mp3');
+    await download(params, 'mp3', req, res);
 }
