@@ -1,10 +1,10 @@
 ﻿import express from "express";
-import {downloadAudio, downloadVideo} from "./controller.js";
+import {downloadAudio, downloadVideo, downloadThumbnail} from "./controller.js";
 
 const router = express.Router();
 
-// TODO: Add thumbnail download
 router.get("/video/:id", downloadVideo);
 router.get("/audio/:id", downloadAudio);
+router.get("/thumbnail/:id", downloadThumbnail);
 
 export default router;

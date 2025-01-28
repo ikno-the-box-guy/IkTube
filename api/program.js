@@ -1,8 +1,17 @@
 ﻿import express from 'express';
 import router from "./router.js";
 import {execSync} from "child_process";
+import * as fs from "node:fs";
 
-execSync("yt-dlp -U", {stdio: "inherit"});
+if(process.platform === 'win32')
+  execSync("yt-dlp -U", {stdio: "inherit"});
+else 
+  console.log("Don't forget to check your yt-dlp version!");
+
+// Clear cache
+fs.rmSync('./downloads', { recursive: true, force: true });
+
+// TODO: Periodically clear cache
 
 const app = express()
 app.use(express.json())
