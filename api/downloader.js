@@ -1,4 +1,4 @@
-import {execSync, spawn} from "child_process";
+import {execSync} from "child_process";
 import * as fs from "node:fs";
 
 const cleanVideoId = (id) => {
@@ -24,10 +24,15 @@ const download = async (params, extension, req, res) => {
         return;
     }
     
+    const directory = `./downloads/${videoId}`;
+    const filePath = `${directory}/file.${extension}`;
+    const infoPath = `${directory}/info.json`;
+    
     // Load cached file if it exists
-    if (fs.existsSync(`./downloads/${videoId}.${extension}`)) {
-        // TODO: Find some way to store title
-        res.download(`./downloads/${videoId}.${extension}`, (err) => {
+    if (fs.existsSync(filePath) && fs.existsSync(infoPath)) {
+        const info = JSON.parse(fs.readFileSync(infoPath).toString());
+        
+        res.download(filePath, `${info.title}.${extension}`, (err) => {
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).send('Error sending file');
@@ -36,14 +41,17 @@ const download = async (params, extension, req, res) => {
         return;
     }
 
-    const command = ['yt-dlp', ...params, '-o', `./downloads/${videoId}.${extension}`, '-q', '--no-simulate', '-j', videoId].join(' ');
+    const command = ['yt-dlp', ...params, '-o', filePath, '-q', '--no-simulate', '-j', videoId].join(' ');
     
     const ytDlp = execSync(command);
     
-    const info = JSON.parse(ytDlp.toString());
+    const infoString = ytDlp.toString();
+    const info = JSON.parse(infoString);
     const title = info.title.trim();
     
-    res.download(`./downloads/${videoId}.${extension}`, `${title}.${extension}`, (err) => {
+    fs.writeFileSync(infoPath, infoString);
+    
+    res.download(filePath, `${title}.${extension}`, (err) => {
         if (err) {
             console.error('Error sending file:', err);
             res.status(500).send('Error sending file');
