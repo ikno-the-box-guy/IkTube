@@ -25,7 +25,7 @@ const download = async (params, extension, req, res) => {
     }
     
     const directory = `./downloads/${videoId}`;
-    const filePath = `${directory}/file.${extension}`;
+    let filePath = `${directory}/file.${extension}`;
     const infoPath = `${directory}/info.json`;
     
     // Load cached file if it exists
@@ -40,8 +40,8 @@ const download = async (params, extension, req, res) => {
         });
         return;
     }
-
-    const command = ['yt-dlp', ...params, '-o', filePath, '-q', '--no-simulate', '-j', videoId].join(' ');
+    
+    const command = ['yt-dlp', ...params, '-o', extension === 'png' ? `${directory}/file` : filePath, '-q', '--no-simulate', '-j', videoId].join(' ');
     
     const ytDlp = execSync(command);
     

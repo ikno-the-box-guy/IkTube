@@ -46,6 +46,29 @@ function downloadVideo(videoId) {
     });
 }
 
+let downloadingThumbnail = false;
+
+function downloadThumbnail(videoId) {
+    downloadingThumbnail = true;
+
+    chrome.downloads.download({
+        url: `http://localhost:3000/api/v1/thumbnail/${videoId}`,
+        saveAs: false
+    }, (downloadId) => {
+        chrome.runtime.sendMessage({
+            type: 'status',
+            format: 'thumbnail',
+            downloading: false
+        })
+
+        downloadingThumbnail = false;
+
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError.message);
+        }
+    });
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'download') {
         if (message.format === 'audio') {
@@ -54,6 +77,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         
         if (message.format === 'video') {
             downloadVideo(message.videoId);
+        }
+        
+        if (message.format === 'thumbnail') {
+            downloadThumbnail(message.videoId);
         }
     }
     
@@ -64,6 +91,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         if (message.format === 'video') {
             sendResponse({downloading: downloadingVideo});
+        }
+        
+        if (message.format === 'thumbnail') {
+            sendResponse({downloading: downloadingThumbnail});
         }
     }
 });

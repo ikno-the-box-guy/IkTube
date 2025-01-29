@@ -15,7 +15,7 @@ export const downloadAudio = async (req, res) => {
 }
 
 export const downloadThumbnail = async (req, res) => {
-    const params = ['--write-thumbnail', '--skip-download'];
+    const params = ['--write-thumbnail', '--skip-download', '--convert-thumbnails', 'png'];
     
-    await download(params, 'jpg', req, res);
+    await download(params, 'png', req, res);
 }

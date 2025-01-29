@@ -1,6 +1,6 @@
 {
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "IkTube",
+  "description": "A simple YouTube downloading extension.",
   "version": "1.0",
   "manifest_version": 3,
   "action": {

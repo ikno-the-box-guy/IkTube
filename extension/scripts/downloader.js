@@ -8,6 +8,10 @@ downloadVideoButton.addEventListener("click", downloadVideo);
 const downloadAudioButton = document.getElementById("download-audio");
 downloadAudioButton.addEventListener("click", downloadAudio);
 
+// Get the download thumbnail button
+const downloadThumbnailButton = document.getElementById("download-thumbnail");
+downloadThumbnailButton.addEventListener("click", downloadThumbnail);
+
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // since only one tab should be active and in the current window at once
     // the return variable should only have one entry
@@ -23,6 +27,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         
         downloadVideoButton.disabled = false;
         downloadAudioButton.disabled = false;
+        downloadThumbnailButton.disabled = false;
     }
 });
 
@@ -46,6 +51,16 @@ chrome.runtime.sendMessage({
     }
 })
 
+chrome.runtime.sendMessage({
+    type: 'status',
+    format: 'thumbnail',
+}).then((response) => {
+    if (response.downloading && videoId) {
+        downloadThumbnailButton.disabled = true;
+        downloadThumbnailButton.setAttribute('downloading', '');
+    }
+})
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'status') {
         if (message.format === 'audio') {
@@ -59,6 +74,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             if (!message.downloading && videoId) {
                 downloadVideoButton.disabled = false;
                 downloadVideoButton.removeAttribute('downloading');
+            }
+        }
+        
+        if (message.format === 'thumbnail') {
+            if (!message.downloading && videoId) {
+                downloadThumbnailButton.disabled = false;
+                downloadThumbnailButton.removeAttribute('downloading');
             }
         }
     }
@@ -82,6 +104,17 @@ function downloadAudio() {
     chrome.runtime.sendMessage({
         type: 'download',
         format: 'audio',
+        videoId: videoId
+    });
+}
+
+function downloadThumbnail() {
+    downloadThumbnailButton.disabled = true;
+    downloadThumbnailButton.setAttribute('downloading', '');
+    
+    chrome.runtime.sendMessage({
+        type: 'download',
+        format: 'thumbnail',
         videoId: videoId
     });
 }
