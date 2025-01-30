@@ -2,6 +2,7 @@
 import router from "./router.js";
 import {execSync} from "child_process";
 import * as fs from "node:fs";
+import 'dotenv/config';
 
 if(process.platform === 'win32')
   execSync("yt-dlp -U", {stdio: "inherit"});
@@ -24,6 +25,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/', router)
-app.listen(3000, () => {
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
     console.log('\nServer is running on port 3000')
 });
