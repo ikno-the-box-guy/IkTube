@@ -1,0 +1,56 @@
+name: Pack and Release Chrome Extension
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  pack-and-release:
+    name: Pack and Release Chrome Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure all tags are fetched
+
+      - name: Get Latest Tag and Increment Version
+        id: versioning
+        run: |
+          LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
+          if [[ -z "$LATEST_TAG" ]]; then
+            NEW_TAG="v1.0.0"
+          else
+            VERSION=$(echo $LATEST_TAG | sed 's/v//')
+            IFS='.' read -r -a PARTS <<< "$VERSION"
+            PARTS[2]=$((PARTS[2] + 1))
+            NEW_TAG="v${PARTS[0]}.${PARTS[1]}.${PARTS[2]}"
+          fi
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Create and Push New Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ env.NEW_TAG }}
+          git push origin ${{ env.NEW_TAG }}
+
+      - name: Pack Chrome Extension
+        uses: emilymclean/pack-chromium-extension-action@v1
+        env:
+          EXTENSION_KEY: ${{ secrets.EXTENSION_PRIVATE_KEY }}
+        with:
+          input-folder: extension
+          output-file: dist/extension.crx
+  
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          name: "Release ${{ env.NEW_TAG }}"
+          draft: false
+          prerelease: false
+          files: extension.crx
