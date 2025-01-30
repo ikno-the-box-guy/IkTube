@@ -30,13 +30,17 @@ jobs:
           fi
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
-      - name: Pack Chrome Extension
-        uses: emilymclean/pack-chromium-extension-action@v1
-        env:
-          EXTENSION_KEY: ${{ secrets.EXTENSION_PRIVATE_KEY }}
+      - id: packExtensionDir
+        uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
-          input-folder: extension
-          output-file: extension.crx
+          extensionDir: 'extension'
+          zipFilePath: 'build/extension.zip'
+      
+      - uses: cardinalby/webext-buildtools-chrome-crx-action@v2
+        with:
+          zipFilePath: 'build/extension.zip'
+          crxFilePath: 'build/extension.crx'
+          privateKey: ${{ secrets.EXTENSION_PRIVATE_KEY }}
   
       - name: Create GitHub Release
         id: create_release
@@ -46,4 +50,4 @@ jobs:
           name: "Release ${{ env.NEW_TAG }}"
           draft: false
           prerelease: false
-          files: extension.crx
+          files: 'build/extension.crx'
