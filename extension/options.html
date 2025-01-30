@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>IkTube options</title>
+</head>
+<body>
+    <div>
+        <h1>API address</h1>
+        <input type="text" id="api-input" placeholder="http://localhost:3000/"/>
+    </div>
+
+    <script src="scripts/options.js"></script>
+</body>
+</html>
+
+<style>
+    div {
+        padding: 20px;
+    }
+    
+    h1 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    
+    input {
+        font-family: inherit;
+        width: 100%;
+        border: 0;
+        outline: 0;
+        font-size: 1.3rem;
+        padding: 7px 0;
+        background: transparent;
+        transition: border-color 0.2s;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: #202124; /* Default dark mode background */
+            color: white;
+        }
+        
+        input {
+            border-bottom: 2px solid gray;
+            color: white;
+        }
+    }
+    
+    @media (prefers-color-scheme: light) {
+        body {
+            background-color: white;
+            color: black;
+        }
+        
+        input {
+            border-bottom: 2px solid darkgray;
+            color: black;
+        }
+    }
+</style>

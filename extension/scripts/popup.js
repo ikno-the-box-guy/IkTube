@@ -12,6 +12,16 @@ downloadAudioButton.addEventListener("click", downloadAudio);
 const downloadThumbnailButton = document.getElementById("download-thumbnail");
 downloadThumbnailButton.addEventListener("click", downloadThumbnail);
 
+// Get the options button
+const optionsButton = document.getElementById("options");
+optionsButton.addEventListener("click", () => {
+    if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+    } else {
+        window.open(chrome.runtime.getURL('options.html'));
+    }
+});
+
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // since only one tab should be active and in the current window at once
     // the return variable should only have one entry

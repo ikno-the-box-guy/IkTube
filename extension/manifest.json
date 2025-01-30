@@ -3,13 +3,15 @@
   "description": "A simple YouTube downloading extension.",
   "version": "1.0",
   "manifest_version": 3,
+  "key": "MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHLXCbGOKkyonkBPCu7kye4JN9sWQBd4EOqlUHKl8BVszW/+c66LkvH5vF2p58T3iCE3HwwqxL8ZPxfEspD/U8lk2t7w+n6ko09zaOMvl02aAbxB8QC70WU5RbgSh+LfQaBGYGElyj/DcrnS8/mQSeK4gL4rCNTan9H0BgEynm6hAgMBAAE=",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"
   },
-  "host_permissions": [
-    "http://localhost:3000/*"
-  ],
   "background": {
     "service_worker": "scripts/background.js"
   },

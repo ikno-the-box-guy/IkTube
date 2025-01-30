@@ -40,13 +40,14 @@
             </button>
         </div>
         <hr/>
-        <div class="text-container">
+        <div class="text-container footer">
             <a href="https://github.com/ikno-the-box-guy/IkTube" target="_blank">GitHub</a>
+            <a id="options">Go to options</a>
         </div>
     </div>
 </body>
 
-<script src="scripts/downloader.js"></script>
+<script src="scripts/popup.js"></script>
 
 <style>
     html {
@@ -173,6 +174,10 @@
         flex-direction: row;
         
         gap: 5px;
+    }
+    
+    .footer {
+        justify-content: space-between;
     }
 
     @media (prefers-color-scheme: dark) {

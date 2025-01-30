@@ -1,100 +1,81 @@
 ﻿// TODO: Download in the background, so you can close the popup or go to a different tab while its working
 
-let downloadingAudio = false;
+/**
+ * @param {string} endpoint
+ * @param {string} videoId
+ * @returns {Promise<string>}
+ */
+function getUrl(endpoint, videoId) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(
+            {apiAddress: ''},
+            (items) => {
+                const address = items.apiAddress;
+                
+                if (!address) {
+                    reject('No API address set');
+                    return;
+                }
+                
+                const baseAddress = address.trim().replace(/\/$/, '');
+                
+                resolve(`${baseAddress}/api/v1/${endpoint}/${videoId}`);
+            }
+        );
+    });
+}
 
-function downloadAudio(videoId) {
-    downloadingAudio = true; 
+
+
+/*  
+ *  TODO: Needs MUCH better error handling
+ *  
+ *  It is nearly impossible for the user to tell what went wrong
+ *  Communicate whether or not the issue is with the set API address or the download itself
+ *  (e.g. "Invalid URL" vs "Failed to download video")
+ *
+ */
+
+async function download(type, videoId) {
+    downloading.set(type, true);
     
-    chrome.downloads.download({
-        url: `http://localhost:3000/api/v1/audio/${videoId}`,
-        saveAs: false
-    }, (downloadId) => {
-        chrome.runtime.sendMessage({
-            type: 'status',
-            format: 'audio',
-            downloading: false
-        })
+    try {
+        const url = await getUrl(type, videoId);
         
-        downloadingAudio = false;
-        
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
-        }
-    });
-}
+        await new Promise((resolve) => {
+            chrome.downloads.download({
+                url: url,
+                saveAs: false
+            }, (downloadId) => {
+                if (chrome.runtime.lastError) {
+                    console.error(chrome.runtime.lastError.message);
+                }
+                
+                resolve();
+            });
+        })
+    } catch (error) {
+        console.error(error);
+    } finally {
+        downloading.delete(type);
 
-let downloadingVideo = false;
-
-function downloadVideo(videoId) {
-    downloadingVideo = true;
-
-    chrome.downloads.download({
-        url: `http://localhost:3000/api/v1/video/${videoId}`,
-        saveAs: false
-    }, (downloadId) => {
         chrome.runtime.sendMessage({
             type: 'status',
-            format: 'video',
+            format: type,
             downloading: false
         })
-
-        downloadingVideo = false;
-
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
-        }
-    });
+    }
 }
 
-let downloadingThumbnail = false;
+// Create a map to keep track of what is currently being downloaded
+const downloading = new Map();
 
-function downloadThumbnail(videoId) {
-    downloadingThumbnail = true;
-
-    chrome.downloads.download({
-        url: `http://localhost:3000/api/v1/thumbnail/${videoId}`,
-        saveAs: false
-    }, (downloadId) => {
-        chrome.runtime.sendMessage({
-            type: 'status',
-            format: 'thumbnail',
-            downloading: false
-        })
-
-        downloadingThumbnail = false;
-
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
-        }
-    });
-}
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.type === 'download') {
-        if (message.format === 'audio') {
-            downloadAudio(message.videoId);
-        }
-        
-        if (message.format === 'video') {
-            downloadVideo(message.videoId);
-        }
-        
-        if (message.format === 'thumbnail') {
-            downloadThumbnail(message.videoId);
-        }
+        await download(message.format, message.videoId);
     }
     
     if (message.type === 'status') {
-        if (message.format === 'audio') {
-            sendResponse({downloading: downloadingAudio});
-        }
-
-        if (message.format === 'video') {
-            sendResponse({downloading: downloadingVideo});
-        }
-        
-        if (message.format === 'thumbnail') {
-            sendResponse({downloading: downloadingThumbnail});
-        }
+        sendResponse({downloading: downloading.has(message.format)});
     }
 });
