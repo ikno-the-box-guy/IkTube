@@ -24,7 +24,7 @@ const download = async (params, extension, req, res) => {
         return;
     }
     
-    const directory = `./downloads/${videoId}`;
+    const directory = `./downloads/cache/${videoId}`;
     let filePath = `${directory}/file.${extension}`;
     const infoPath = `${directory}/info.json`;
     

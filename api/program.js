@@ -4,10 +4,10 @@ import {execSync} from "child_process";
 import * as fs from "node:fs";
 import 'dotenv/config';
 
-execSync("yt-dlp -U", {stdio: "inherit"});
+// execSync("yt-dlp -U", {stdio: "inherit"});
 
 // Clear cache
-fs.rmSync('./downloads', { recursive: true, force: true });
+fs.rmSync('./downloads/cache', { recursive: true, force: true });
 
 // TODO: Periodically clear cache
 
