@@ -11,7 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./api/Dockerfile
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.IMAGE_TAG }}
