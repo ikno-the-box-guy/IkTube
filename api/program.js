@@ -4,13 +4,10 @@ import {execSync} from "child_process";
 import * as fs from "node:fs";
 import 'dotenv/config';
 
-if(process.platform === 'win32')
-  execSync("yt-dlp -U", {stdio: "inherit"});
-else 
-  console.log("Don't forget to check your yt-dlp version!");
+// execSync("yt-dlp -U", {stdio: "inherit"});
 
 // Clear cache
-fs.rmSync('./downloads', { recursive: true, force: true });
+fs.rmSync('./downloads/cache', { recursive: true, force: true });
 
 // TODO: Periodically clear cache
 
@@ -28,5 +25,5 @@ app.use('/api/v1/', router)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log('\nServer is running on port 3000')
+    console.log(`\nServer is running on port ${port}`)
 });
