@@ -5,7 +5,7 @@ import {execSync} from "child_process";
 // TODO: Add quality settings
 
 export const downloadVideo = async (req, res) => {
-    const params = ['-f', '"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"'];
+    const params = ['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'];
     
     await download(params, 'mp4', req, res);
 }
