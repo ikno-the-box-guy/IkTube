@@ -17,6 +17,8 @@
   },
   "permissions": [
     "activeTab",
+    "tabs",
+    "webNavigation",
     "scripting",
     "downloads",
     "webRequest",

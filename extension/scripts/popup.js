@@ -26,14 +26,25 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // since only one tab should be active and in the current window at once
     // the return variable should only have one entry
     const activeTab = tabs[0];
+    
+    if (!activeTab || !activeTab.url) {
+        return;
+    }
+    
     const url = activeTab.url;
 
     const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu\.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]{11})((?:\?|\&)\S+)?$/;
-
     const match = url.match(regex);
     
     if (match) {
         videoId = match[6];
+
+        chrome.runtime.sendMessage({ type: 'getTabData', tabId: activeTab.id }, (response) => {
+            console.log('Tab-specific data:', response);
+        });
+        
+        // log current time
+        console.log((new Date()).toLocaleTimeString(), `Video ID: ${videoId}`);
         
         downloadVideoButton.disabled = false;
         downloadAudioButton.disabled = false;
